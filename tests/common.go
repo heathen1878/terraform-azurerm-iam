@@ -1,6 +1,7 @@
 package test
 
 import (
+	"os"
 	"testing"
 
 	"github.com/gruntwork-io/terratest/modules/terraform"
@@ -8,7 +9,11 @@ import (
 )
 
 type Options map[string]any
-type config struct{}
+type config struct {
+	principal_id         string
+	role_definition_name string
+	scope                string
+}
 
 func DefaultOptions() Options {
 	return Options{
@@ -40,10 +45,12 @@ func Setup(t *testing.T, e string, opts Options) *terraform.Options {
 	}
 }
 
-func GetTestConfig(t *testing.T) *config {
+func GetTestConfig(t *testing.T) Options {
 	t.Helper()
 
-	config := config{}
-
-	return &config
+	return Options{
+		"principal_id":         os.Getenv("ARM_CLIENT_OBJECT_ID"),
+		"role_definition_name": "Reader",
+		"scope":                os.Getenv("ARM_SUBSCRIPTION_ID"),
+	}
 }

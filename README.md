@@ -8,11 +8,10 @@
 
 [Standalone](./examples/standalone/README.md)
 
-[Nested](./examples/nested/README.md)
-
 ## Usage
 
 ```shell
+# Typically nested within another module to manage IAM
 module "IAM" {
 
     source ="heathen1878/iam/azurerm"
