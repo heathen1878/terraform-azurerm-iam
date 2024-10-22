@@ -1,5 +1,9 @@
 # Azure IAM module
 
+## Tests
+
+[![Terratest](https://github.com/heathen1878/terraform-azurerm-iam/actions/workflows/module_tests.yaml/badge.svg)](https://github.com/heathen1878/terraform-azurerm-iam/actions/workflows/module_tests.yaml)
+
 ## Examples
 
 [Standalone](./examples/standalone/README.md)
