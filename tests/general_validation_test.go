@@ -10,8 +10,8 @@ import (
 func TestItErrorsWhenScopeIsEmpty(t *testing.T) {
 	t.Parallel()
 
-	//opts := DefaultOptions().Without("scope")
-	opts := DefaultOptions()
+	opts := DefaultOptions().Without("scope")
+
 	terraformOptions := Setup(t, "examples/standalone", opts)
 
 	_, err := terraform.InitAndPlanE(t, terraformOptions)
