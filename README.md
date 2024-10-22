@@ -7,7 +7,10 @@
 ## Examples
 
 [Standalone](./examples/standalone/README.md)
+
 [Nested](./examples/nested/README.md)
+
+## Usage
 
 ```shell
 module "IAM" {
