@@ -42,10 +42,10 @@ jobs:
         export ARM_USE_AZUREAD=true
 
         # Install Go Junit reporter
-        go install github.com/jstemmer/go-junit-report@latest
+        go install github.com/jstemmer/go-junit-report/v2@latest
 
         # Run Go tests
-        go test -v ./... | go-junit-report -set-exit-code > report.xml
+        go test -v 2>&1 ./... | go-junit-report -set-exit-code > report.xml
 
     - name: Upload test summary
       uses: test-summary/action@v1
