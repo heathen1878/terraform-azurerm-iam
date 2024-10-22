@@ -41,13 +41,6 @@ func Setup(t *testing.T, e string, opts Options) *terraform.Options {
 	}
 }
 
-func GetEnvVars() (vars []string) {
-
-	os_vars := os.Environ()
-
-	return os_vars
-}
-
 func GetTestConfig(t *testing.T) *config {
 	t.Helper()
 
