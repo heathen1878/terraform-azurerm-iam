@@ -1,6 +1,7 @@
 package test
 
 import (
+	"os"
 	"testing"
 
 	"github.com/gruntwork-io/terratest/modules/terraform"
@@ -8,10 +9,13 @@ import (
 )
 
 type Options map[string]any
+type config struct{}
 
 func DefaultOptions() Options {
 	return Options{
+		"principal_id":         "00000000-0000-0000-0000-000000000000",
 		"role_definition_name": "Reader",
+		"scope":                "/subscriptions/00000000-0000-0000-0000-000000000000",
 	}
 }
 
@@ -35,4 +39,19 @@ func Setup(t *testing.T, e string, opts Options) *terraform.Options {
 		TerraformDir: tempFolder,
 		Vars:         opts,
 	}
+}
+
+func GetEnvVars() (vars []string) {
+
+	os_vars := os.Environ()
+
+	return os_vars
+}
+
+func GetTestConfig(t *testing.T) *config {
+	t.Helper()
+
+	config := config{}
+
+	return &config
 }

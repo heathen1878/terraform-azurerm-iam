@@ -11,7 +11,7 @@ module "iam" {
 
   source = "../.."
 
-  principal_id         = data.azurerm_client_config.this.object_id
+  principal_id         = var.principal_id
   role_definition_name = var.role_definition_name
-  scope                = azurerm_resource_group.this.id
+  scope                = var.scope
 }
