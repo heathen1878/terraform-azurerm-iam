@@ -28,3 +28,14 @@ func TestItErrorsWhenPrincipalIdIsEmpty(t *testing.T) {
 	_, err := terraform.InitAndPlanE(t, terraformOptions)
 	require.NotNil(t, err)
 }
+
+func TestItErrorsWhenRoleDefintionNameIsEmpty(t *testing.T) {
+	t.Parallel()
+
+	opts := DefaultOptions().Without("role_definition_name")
+
+	terraformOptions := Setup(t, "examples/standalone", opts)
+
+	_, err := terraform.InitAndPlanE(t, terraformOptions)
+	require.NotNil(t, err)
+}
