@@ -35,10 +35,10 @@ jobs:
       run: |
 
         # Setup Go environment
-        GOPATH="$HOME/go/"
+        GOPATH="$HOME/go"
         export GOPATH
 
-        PATH="$GOPATH/bin:$PATH"
+        PATH=$PATH:$GOPATH/bin
         export PATH
         
         # export variables as environment variables
@@ -55,10 +55,13 @@ jobs:
         # Run Go tests
         go test -v 2>&1 ./... | go-junit-report -set-exit-code > report.xml
 
+        # List Directory
+        ls -la
+
     - name: Upload test summary
       uses: test-summary/action@v1
       with:
         paths: |
-          report.xml
+          tests/report.xml
       if: always()
       
