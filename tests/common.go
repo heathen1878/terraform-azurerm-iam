@@ -1,6 +1,7 @@
 package test
 
 import (
+	"fmt"
 	"os"
 	"testing"
 
@@ -51,6 +52,6 @@ func GetTestConfig(t *testing.T) Options {
 	return Options{
 		"principal_id":         os.Getenv("ARM_CLIENT_OBJECT_ID"),
 		"role_definition_name": "Reader",
-		"scope":                os.Getenv("ARM_SUBSCRIPTION_ID"),
+		"scope":                fmt.Sprintf("/subscriptions/%s", os.Getenv("ARM_SUBSCRIPTION_ID")),
 	}
 }
