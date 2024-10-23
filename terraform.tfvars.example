@@ -1,0 +1,5 @@
+description = "Grants the Reader role to the specified principal on the specified scope."
+principal_id = "00000000-0000-0000-0000-000000000000"
+principal_type = "ServicePrincipal"
+role_definition_name = "Reader"
+scope = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-terraform-azurerm-iam"
