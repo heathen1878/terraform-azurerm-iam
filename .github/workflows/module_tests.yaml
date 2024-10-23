@@ -33,6 +33,14 @@ jobs:
     - name: Run tests
       id: tests
       run: |
+
+        # Setup Go environment
+        GOPATH="$HOME/go/"
+        export GOPATH
+
+        PATH="$GOPATH/bin:$PATH"
+        export PATH
+        
         # export variables as environment variables
         export ARM_CLIENT_OBJECT_ID=${{ secrets.ARM_CLIENT_OBJECT_ID }}
         export ARM_CLIENT_ID=${{ secrets.ARM_CLIENT_ID }}
