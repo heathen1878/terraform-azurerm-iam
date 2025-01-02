@@ -10,11 +10,6 @@ import (
 )
 
 type Options map[string]any
-type config struct {
-	principal_id         string
-	role_definition_name string
-	scope                string
-}
 
 func DefaultOptions() Options {
 	return Options{
