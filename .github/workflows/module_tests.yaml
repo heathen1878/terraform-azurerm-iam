@@ -54,10 +54,6 @@ jobs:
 
         # Run Go tests
         go test -v 2>&1 ./... | go-junit-report -set-exit-code > report.xml
-
-        # List Directory
-        ls -la
-
     - name: Upload test summary
       uses: test-summary/action@v1
       with:
