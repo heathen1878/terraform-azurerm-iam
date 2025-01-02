@@ -4,6 +4,10 @@
 
 [![Terratest](https://github.com/heathen1878/terraform-azurerm-iam/actions/workflows/module_tests.yaml/badge.svg)](https://github.com/heathen1878/terraform-azurerm-iam/actions/workflows/module_tests.yaml)
 
+## Security
+
+[![Dependabot](https://img.shields.io/badge/dependabot-active-brightgreen?style=flat-square&logo=dependabot)](https://github.com/heathen1878/terraform-azurerm-iam/security/dependabot)
+
 ## Examples
 
 [Standalone](./examples/standalone/README.md)
