@@ -7,3 +7,11 @@ updates:
       day: "sunday"
       time: "12:00"
       timezone: "Europe/London"
+
+  - package-ecosystem: "terraform"
+    directory: "/examples/standalone"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
+      time: "12:00"
+      timezone: "Europe/London"
