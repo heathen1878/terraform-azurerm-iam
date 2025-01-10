@@ -3,15 +3,20 @@ updates:
   - package-ecosystem: "terraform"
     directory: "/"
     schedule:
-      interval: "weekly"
-      day: "sunday"
+      interval: "monthly"
       time: "12:00"
       timezone: "Europe/London"
 
   - package-ecosystem: "terraform"
     directory: "/examples/standalone"
     schedule:
-      interval: "weekly"
-      day: "sunday"
+      interval: "monthly"
+      time: "12:00"
+      timezone: "Europe/London"
+
+  - package-ecosystem: "gomod"
+    directory: "/tests"
+    schedule:
+      interval: "monthly"
       time: "12:00"
       timezone: "Europe/London"
