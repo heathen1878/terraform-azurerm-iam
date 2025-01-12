@@ -7,13 +7,6 @@ updates:
       time: "12:00"
       timezone: "Europe/London"
 
-  - package-ecosystem: "terraform"
-    directory: "/examples/standalone"
-    schedule:
-      interval: "monthly"
-      time: "12:00"
-      timezone: "Europe/London"
-
   - package-ecosystem: "gomod"
     directory: "/tests"
     schedule:

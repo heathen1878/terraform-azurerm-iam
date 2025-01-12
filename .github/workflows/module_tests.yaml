@@ -30,8 +30,8 @@ jobs:
       with:
         terraform_version: ${{ vars.TERRAFORM_VERSION }}
 
-    - name: Run tests
-      id: tests
+    - name: Run Validation Tests
+      id: validation_tests
       run: |
 
         # Setup Go environment
@@ -53,12 +53,67 @@ jobs:
         go install github.com/jstemmer/go-junit-report/v2@latest
 
         # Run Go tests
-        #go test -v 2>&1 ./... | go-junit-report -set-exit-code > report.xml
-        go test -v ./... | go-junit-report -set-exit-code > report.xml
+        go test -v general_validation_test.go common.go | go-junit-report -set-exit-code > report.xml
     - name: Upload test summary
       uses: test-summary/action@v1
       with:
         paths: |
           tests/report.xml
-      if: always()
+    
+    - name: Run Unit Tests
+      id: unit_tests
+      run: |
+
+        # Setup Go environment
+        GOPATH="$HOME/go"
+        export GOPATH
+
+        PATH=$PATH:$GOPATH/bin
+        export PATH
+        
+        # export variables as environment variables
+        export ARM_CLIENT_OBJECT_ID=${{ secrets.ARM_CLIENT_OBJECT_ID }}
+        export ARM_CLIENT_ID=${{ secrets.ARM_CLIENT_ID }}
+        export ARM_CLIENT_SECRET=${{ secrets.ARM_CLIENT_SECRET }}
+        export ARM_TENANT_ID=${{ secrets.ARM_TENANT_ID }}
+        export ARM_SUBSCRIPTION_ID=${{ vars.ARM_SUBSCRIPTION_ID }}
+        export ARM_USE_AZUREAD=true
+
+        # Install Go Junit reporter
+        go install github.com/jstemmer/go-junit-report/v2@latest
+
+        # Run Go tests
+        go test -v unit_test.go common.go | go-junit-report -set-exit-code > report.xml
+
+    - name: Run Regression Test
+      id: regresson_tests
+      run: | 
+
+        # Grab the current version
+        CURRENT_VERSION=${{ vars.PROVIDER_VERSION }}
+        echo ${CURRENT_VERSION}
+
+        # Set the current version
+        # sed -i "5aversion = \"${CURRENT_VERSION}\"" examples/standalone/versions.tf
+        # format the terraform...
+        # terraform fmt examples/standalone
+
+        # Run the go test without destroy...
+
+
+        # Update the provider version...
+        # sed -i '6d' examples/standalone/versions.tf
+
+        # Run the go test with destroy...
+        # Test need to determine whether there are changes.. no changes.... success.... changes... fail....
+
+
+        # Update version 
+        # grab the latest version....
+        # Update provider version to be the latest version....
+
+
+
+
+
       
