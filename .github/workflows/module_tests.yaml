@@ -55,7 +55,7 @@ jobs:
         # Run Go tests
         go test -v general_validation_test.go common.go 2>&1 | go-junit-report -set-exit-code > report.xml
 
-    - name: Upload unit test summary
+    - name: Upload validation test summary
       needs: validation_tests
       uses: test-summary/action@v1
       with:
