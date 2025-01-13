@@ -114,7 +114,7 @@ jobs:
 
         # Grab the current version
         CURRENT_VERSION=${{ vars.PROVIDER_VERSION }}
-        echo ${CURRENT_VERSION}
+        echo $CURRENT_VERSION
 
         # Set the current version
         sed -i "5aversion = \"${CURRENT_VERSION}\"" ../examples/standalone/versions.tf
@@ -122,15 +122,17 @@ jobs:
         terraform fmt ../examples/standalone
 
         # Run the go test without destroy...
-        go test -v -run TestItApplies_Regression_Part_1 common.go 2>&1 | go-junit-report -set-exit-code > r1_report.xml
+        go test -count=1 -v -run TestItApplies_Regression_Part_1 common.go 2>&1 | go-junit-report -set-exit-code > r1_report.xml
 
         # Update the provider version...
+        NEW_VERSION=${{ vars.NEW_PROVIDER_VERSION }}
         sed -i '6d' ../examples/standalone/versions.tf
+        sed -i "5aversion = \"${NEW_VERSION}\"" ../examples/standalone/versions.tf
         # format the terraform...
         terraform fmt ../examples/standalone
 
         # Run the go test with destroy...
-        go test -v -run TestItApplies_Regression_Part_2 common.go 2>&1 | go-junit-report -set-exit-code > r2_report.xml
+        go test -count=1 -v -run TestItApplies_Regression_Part_2 common.go 2>&1 | go-junit-report -set-exit-code > r2_report.xml
 
         # Update version 
         # grab the latest version....
