@@ -31,12 +31,9 @@ jobs:
       uses: hashicorp/setup-terraform@v3
       with:
         terraform_version: ${{ vars.TERRAFORM_VERSION }}
+      if: steps.auth.outcome == 'success'
 
     - name: Run Validation Tests
-      needs: [
-        auth,
-        tf_install
-      ]
       id: validation_tests
       run: |
 
@@ -60,6 +57,7 @@ jobs:
 
         # Run Go tests
         go test -v general_validation_test.go common.go 2>&1 | go-junit-report -set-exit-code > report.xml
+      if: steps.tf_install.outcome == 'success'
 
     - name: Upload validation test summary
       uses: test-summary/action@v2
