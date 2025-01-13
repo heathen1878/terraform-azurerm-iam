@@ -69,6 +69,9 @@ jobs:
 
         PATH=$PATH:$GOPATH/bin
         export PATH
+
+        # Install go junit reporting package
+        go install github.com/jstemmer/go-junit-report/v2@latest
         
         # export variables as environment variables
         export ARM_CLIENT_OBJECT_ID=${{ secrets.ARM_CLIENT_OBJECT_ID }}
@@ -86,6 +89,24 @@ jobs:
       id: regression_tests
       run: | 
 
+        # Setup Go environment
+        GOPATH="$HOME/go"
+        export GOPATH
+
+        PATH=$PATH:$GOPATH/bin
+        export PATH
+
+        # Install go junit reporting package
+        go install github.com/jstemmer/go-junit-report/v2@latest
+        
+        # export variables as environment variables
+        export ARM_CLIENT_OBJECT_ID=${{ secrets.ARM_CLIENT_OBJECT_ID }}
+        export ARM_CLIENT_ID=${{ secrets.ARM_CLIENT_ID }}
+        export ARM_CLIENT_SECRET=${{ secrets.ARM_CLIENT_SECRET }}
+        export ARM_TENANT_ID=${{ secrets.ARM_TENANT_ID }}
+        export ARM_SUBSCRIPTION_ID=${{ vars.ARM_SUBSCRIPTION_ID }}
+        export ARM_USE_AZUREAD=true
+        
         # Grab the current version
         CURRENT_VERSION=${{ vars.PROVIDER_VERSION }}
         echo ${CURRENT_VERSION}
