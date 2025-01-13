@@ -1,7 +1,10 @@
 package test
 
 import (
-	
+	"testing"
+
+	"github.com/gruntwork-io/terratest/modules/terraform"
+	"github.com/stretchr/testify/require"
 )
 
 func TestItApplies_Regression_Part_1(t *testing.T) {
