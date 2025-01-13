@@ -96,13 +96,13 @@ jobs:
         terraform fmt examples/standalone
 
         # Run the go test without destroy...
-        go test -v -run TestItApplies_Regression_Part_1 2>&1 | go-junit-report -set-exit-code > r1_report.xml
+        go test -v -run TestItApplies_Regression_Part_1 common.go 2>&1 | go-junit-report -set-exit-code > r1_report.xml
 
         # Update the provider version...
         sed -i '6d' ../examples/standalone/versions.tf
 
         # Run the go test with destroy...
-        go test -v -run TestItApplies_Regression_Part_2 2>&1 | go-junit-report -set-exit-code >> r2_report.xml
+        go test -v -run TestItApplies_Regression_Part_2 common.go 2>&1 | go-junit-report -set-exit-code > r2_report.xml
 
         # Update version 
         # grab the latest version....
@@ -114,6 +114,28 @@ jobs:
       with:
         paths: tests/*.xml
       if: always()
+    
+    - name: Add Comment to PR
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const output = `### Next Steps...
+          <details>
+          Update the readme with details of any changes the new version introduces...and then create a new release once the PR is merged.
+          </details>
+
+          Pusher: @${{ github.actor }}
+          Action: ${{ github.event_name }}
+          Workflow: ${{ github.workflow }}`;
+
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: output
+          })
+      if: steps.regression_tests.outcome == 'success'
 
 
 
