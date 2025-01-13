@@ -31,12 +31,18 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Output Dependabot Info
-      id: dependabot_output
+    # As the dependabot task above doesn't show the version info. I've mashed together the step below to pull the latest version and update
+    # the github actions variable NEW_PROVIDER_VERSION with that value.
+    - name: Pull AzureRm changelog and Parse
+      id: pull_and_parse
       run: |
 
-        echo ${{ steps.dependabot_info.outputs.previous-version }}
-        echo ${{ steps.dependabot_info.outputs.new-version }}        
+        # There might be an issue here if subsequent tests run and pull a newer provider version...
+        curl -sL https://raw.githubusercontent.com/hashicorp/terraform-provider-azurerm/main/CHANGELOG.md -o changelog.md
+        NEW_VERSION=$(sed -n '1s/.*\([0-9]\+\.[0-9]\+\.[0-9]\+\).*/\1/p' changelog.md)
+        gh variable set NEW_PROVIDER_VERSION-b $NEW_VERSION
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Authenticate with Azure
       id: auth
