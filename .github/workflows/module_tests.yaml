@@ -132,7 +132,6 @@ jobs:
 
         # Grab the current version
         CURRENT_VERSION=${{ vars.PROVIDER_VERSION }}
-        echo $CURRENT_VERSION
 
         # Set the current version
         sed -i "5aversion = \"${CURRENT_VERSION}\"" ../examples/standalone/versions.tf
