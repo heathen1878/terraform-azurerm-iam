@@ -40,9 +40,9 @@ jobs:
         # There might be an issue here if subsequent tests run and pull a newer provider version...
         curl -sL https://raw.githubusercontent.com/hashicorp/terraform-provider-azurerm/main/CHANGELOG.md -o changelog.md
         NEW_VERSION=$(sed -n '1s/.*\([0-9]\+\.[0-9]\+\.[0-9]\+\).*/\1/p' changelog.md)
-        gh variable set NEW_PROVIDER_VERSION-b $NEW_VERSION
+        gh variable set NEW_PROVIDER_VERSION -b $NEW_VERSION
       env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Authenticate with Azure
       id: auth
