@@ -63,14 +63,6 @@ jobs:
       uses: test-summary/action@v2
       with:
         paths: tests/report.xml
-        output: tests/validation.md
-      if: always()
-
-    - name: Upload validation test summary
-      uses: actions/upload-artifact@v3
-      with:
-        name: validation-test-summary
-        path: tests/validation.md
       if: always()
     
     # - name: Run Unit Tests
