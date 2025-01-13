@@ -93,7 +93,7 @@ jobs:
         # Set the current version
         sed -i "5aversion = \"${CURRENT_VERSION}\"" ../examples/standalone/versions.tf
         # format the terraform...
-        terraform fmt examples/standalone
+        terraform fmt ../examples/standalone
 
         # Run the go test without destroy...
         go test -v -run TestItApplies_Regression_Part_1 common.go 2>&1 | go-junit-report -set-exit-code > r1_report.xml
