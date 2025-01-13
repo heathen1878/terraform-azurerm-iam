@@ -25,6 +25,19 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
+    - name: Fetch Dependabot Info
+      id: dependabot_info
+      uses: dependabot/fetch-metadata@v2
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Output Dependabot Info
+      id: dependabot_output
+      run: |
+
+        echo ${{ steps.dependabot_info.outputs.previous-version }}
+        echo ${{ steps.dependabot_info.outputs.new-version }}        
+
     - name: Authenticate with Azure
       id: auth
       uses: azure/login@v2
@@ -122,17 +135,18 @@ jobs:
         terraform fmt ../examples/standalone
 
         # Run the go test without destroy...
-        go test -count=1 -v -run TestItApplies_Regression_Part_1 common.go 2>&1 | go-junit-report -set-exit-code > r1_report.xml
+        go test -v -run TestItApplies_Regression_Part_1 ./... 2>&1 | go-junit-report -set-exit-code > r1_report.xml
 
         # Update the provider version...
         NEW_VERSION=${{ vars.NEW_PROVIDER_VERSION }}
+        echo $NEW_VERSION
         sed -i '6d' ../examples/standalone/versions.tf
         sed -i "5aversion = \"${NEW_VERSION}\"" ../examples/standalone/versions.tf
         # format the terraform...
         terraform fmt ../examples/standalone
 
         # Run the go test with destroy...
-        go test -count=1 -v -run TestItApplies_Regression_Part_2 common.go 2>&1 | go-junit-report -set-exit-code > r2_report.xml
+        go test -v -run TestItApplies_Regression_Part_2 ./... 2>&1 | go-junit-report -set-exit-code > r2_report.xml
 
         # Update version 
         # grab the latest version....

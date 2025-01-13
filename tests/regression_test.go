@@ -6,12 +6,10 @@ import (
 	
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/stretchr/testify/require"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestItApplies_Regression_Part_1(t *testing.T) {
-	//t.Parallel()
-
+	
 	opts := GetTestConfig(t)
 
 	terraformOptions := Setup(t, "examples/standalone", opts)
@@ -21,22 +19,24 @@ func TestItApplies_Regression_Part_1(t *testing.T) {
 }
 
 func TestItApplies_Regression_Part_2(t *testing.T) {
-	//t.Parallel()
-
+	
 	opts := GetTestConfig(t)
 
 	terraformOptions := Setup(t, "examples/standalone", opts)
 
-	terraform.Init(t, terraformOptions)
-
 	defer terraform.Destroy(t, terraformOptions)
-	applyOutput := terraform.ApplyAndIdempotent(t, terraformOptions)
+	applyOutput, err := terraform.InitAndApplyE(t, terraformOptions)
 
 	t.Log(applyOutput)
 
 	// Check if apply output contains indications of resource changes
-	hasChanges := strings.Contains(applyOutput, "Apply complete!")
-	//require.Nil(t, err)
-	//require.Equal(t, "", "")
-	assert.True(t, hasChanges, "Terraform apply made no changes.")
+	noChanges := strings.Contains(applyOutput, "No changes.")
+	completeZeroAddedChangedDestroyed := strings.Contains(applyOutput, "Apply complete! Resources: 0 added, 0 changed, 0 destroyed.")
+
+	t.Log(noChanges)
+	t.Log(completeZeroAddedChangedDestroyed)
+	
+	require.Nil(t, err)
+	require.True(t, noChanges)
+	require.True(t, completeZeroAddedChangedDestroyed)
 }
