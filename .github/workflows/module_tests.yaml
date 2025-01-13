@@ -7,6 +7,11 @@ on:
       - '*'
   workflow_dispatch:
 
+permissions:
+  pull-requests: write
+  issues: write
+  repository-projects: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -106,7 +111,7 @@ jobs:
         export ARM_TENANT_ID=${{ secrets.ARM_TENANT_ID }}
         export ARM_SUBSCRIPTION_ID=${{ vars.ARM_SUBSCRIPTION_ID }}
         export ARM_USE_AZUREAD=true
-        
+
         # Grab the current version
         CURRENT_VERSION=${{ vars.PROVIDER_VERSION }}
         echo ${CURRENT_VERSION}
@@ -121,6 +126,8 @@ jobs:
 
         # Update the provider version...
         sed -i '6d' ../examples/standalone/versions.tf
+        # format the terraform...
+        terraform fmt ../examples/standalone
 
         # Run the go test with destroy...
         go test -v -run TestItApplies_Regression_Part_2 common.go 2>&1 | go-junit-report -set-exit-code > r2_report.xml
