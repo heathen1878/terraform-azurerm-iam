@@ -40,6 +40,9 @@ jobs:
 
         PATH=$PATH:$GOPATH/bin
         export PATH
+
+        # Install go junit reporting package
+        go install github.com/jstemmer/go-junit-report/v2@latest
         
         # export variables as environment variables
         export ARM_CLIENT_OBJECT_ID=${{ secrets.ARM_CLIENT_OBJECT_ID }}
@@ -50,7 +53,15 @@ jobs:
         export ARM_USE_AZUREAD=true
 
         # Run Go tests
-        go test general_validation_test.go common.go >> $GITHUB_STEP_SUMMARY
+        go test -v general_validation_test.go common.go 2>&1 | go-junit-report -set-exit-code > report.xml
+
+    - name: Upload unit test summary
+      needs: validation_tests
+      uses: test-summary/action@v1
+      with:
+        paths: |
+          tests/report.xml
+      if: always()
     
     - name: Run Unit Tests
       id: unit_tests
@@ -72,10 +83,18 @@ jobs:
         export ARM_USE_AZUREAD=true
 
         # Run Go tests
-        go test unit_test.go common.go >> $GITHUB_STEP_SUMMARY
+        go test -v unit_test.go common.go 2>&1 | go-junit-report -set-exit-code > report.xml
+
+    - name: Upload unit test summary
+      needs: unit_tests
+      uses: test-summary/action@v1
+      with:
+        paths: |
+          tests/report.xml
+      if: always()
 
     - name: Run Regression Test
-      id: regresson_tests
+      id: regression_tests
       run: | 
 
         # Grab the current version
@@ -88,17 +107,25 @@ jobs:
         terraform fmt examples/standalone
 
         # Run the go test without destroy...
-        go test -run TestItApplies_Regression_Part_1 >> $GITHUB_STEP_SUMMARY
+        go test -v -run TestItApplies_Regression_Part_1 2>&1 | go-junit-report -set-exit-code > report.xml
 
         # Update the provider version...
         sed -i '6d' examples/standalone/versions.tf
 
         # Run the go test with destroy...
-        go test -run TestItApplies_Regression_Part_2 >> $GITHUB_STEP_SUMMARY
+        go test -v -run TestItApplies_Regression_Part_2 2>&1 | go-junit-report -set-exit-code >> report.xml
 
         # Update version 
         # grab the latest version....
         # Update provider version to be the latest version....
+    
+    - name: Upload regression test summary
+      needs: regression_tests
+      uses: test-summary/action@v1
+      with:
+        paths: |
+          tests/report.xml
+      if: always()
 
 
 
