@@ -49,16 +49,8 @@ jobs:
         export ARM_SUBSCRIPTION_ID=${{ vars.ARM_SUBSCRIPTION_ID }}
         export ARM_USE_AZUREAD=true
 
-        # Install Go Junit reporter
-        go install github.com/jstemmer/go-junit-report/v2@latest
-
         # Run Go tests
-        go test -v general_validation_test.go common.go | go-junit-report -set-exit-code > report.xml
-    - name: Upload test summary
-      uses: test-summary/action@v1
-      with:
-        paths: |
-          tests/report.xml
+        go test general_validation_test.go common.go >> $GITHUB_STEP_SUMMARY
     
     - name: Run Unit Tests
       id: unit_tests
@@ -79,11 +71,8 @@ jobs:
         export ARM_SUBSCRIPTION_ID=${{ vars.ARM_SUBSCRIPTION_ID }}
         export ARM_USE_AZUREAD=true
 
-        # Install Go Junit reporter
-        go install github.com/jstemmer/go-junit-report/v2@latest
-
         # Run Go tests
-        go test -v unit_test.go common.go | go-junit-report -set-exit-code > report.xml
+        go test unit_test.go common.go >> $GITHUB_STEP_SUMMARY
 
     - name: Run Regression Test
       id: regresson_tests
@@ -94,19 +83,18 @@ jobs:
         echo ${CURRENT_VERSION}
 
         # Set the current version
-        # sed -i "5aversion = \"${CURRENT_VERSION}\"" examples/standalone/versions.tf
+        sed -i "5aversion = \"${CURRENT_VERSION}\"" examples/standalone/versions.tf
         # format the terraform...
-        # terraform fmt examples/standalone
+        terraform fmt examples/standalone
 
         # Run the go test without destroy...
-
+        go test -run TestItApplies_Regression_Part_1 >> $GITHUB_STEP_SUMMARY
 
         # Update the provider version...
-        # sed -i '6d' examples/standalone/versions.tf
+        sed -i '6d' examples/standalone/versions.tf
 
         # Run the go test with destroy...
-        # Test need to determine whether there are changes.. no changes.... success.... changes... fail....
-
+        go test -run TestItApplies_Regression_Part_2 >> $GITHUB_STEP_SUMMARY
 
         # Update version 
         # grab the latest version....
