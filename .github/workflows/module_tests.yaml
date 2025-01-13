@@ -56,85 +56,64 @@ jobs:
         export ARM_USE_AZUREAD=true
 
         # Run Go tests
-        go test -v general_validation_test.go common.go 2>&1 | go-junit-report -set-exit-code > report.xml
+        go test -v general_validation_test.go common.go 2>&1 | go-junit-report -set-exit-code > v_report.xml
+      if: steps.tf_install.outcome == 'success'
+    
+    - name: Run Unit Tests
+      id: unit_tests
+      run: |
+
+        # Setup Go environment
+        GOPATH="$HOME/go"
+        export GOPATH
+
+        PATH=$PATH:$GOPATH/bin
+        export PATH
+        
+        # export variables as environment variables
+        export ARM_CLIENT_OBJECT_ID=${{ secrets.ARM_CLIENT_OBJECT_ID }}
+        export ARM_CLIENT_ID=${{ secrets.ARM_CLIENT_ID }}
+        export ARM_CLIENT_SECRET=${{ secrets.ARM_CLIENT_SECRET }}
+        export ARM_TENANT_ID=${{ secrets.ARM_TENANT_ID }}
+        export ARM_SUBSCRIPTION_ID=${{ vars.ARM_SUBSCRIPTION_ID }}
+        export ARM_USE_AZUREAD=true
+
+        # Run Go tests
+        go test -v unit_test.go common.go 2>&1 | go-junit-report -set-exit-code > u_report.xml
+      if: steps.tf_install.outcome == 'success'
+
+    - name: Run Regression Test
+      id: regression_tests
+      run: | 
+
+        # Grab the current version
+        CURRENT_VERSION=${{ vars.PROVIDER_VERSION }}
+        echo ${CURRENT_VERSION}
+
+        # Set the current version
+        sed -i "5aversion = \"${CURRENT_VERSION}\"" examples/standalone/versions.tf
+        # format the terraform...
+        terraform fmt examples/standalone
+
+        # Run the go test without destroy...
+        go test -v -run TestItApplies_Regression_Part_1 2>&1 | go-junit-report -set-exit-code > r1_report.xml
+
+        # Update the provider version...
+        sed -i '6d' examples/standalone/versions.tf
+
+        # Run the go test with destroy...
+        go test -v -run TestItApplies_Regression_Part_2 2>&1 | go-junit-report -set-exit-code >> r2_report.xml
+
+        # Update version 
+        # grab the latest version....
+        # Update provider version to be the latest version....
       if: steps.tf_install.outcome == 'success'
 
     - name: Upload validation test summary
       uses: test-summary/action@v2
       with:
-        paths: tests/report.xml
+        paths: tests/*.xml
       if: always()
-    
-    # - name: Run Unit Tests
-    #   needs: [
-    #     auth,
-    #     tf_install
-    #   ]
-    #   id: unit_tests
-    #   run: |
-
-    #     # Setup Go environment
-    #     GOPATH="$HOME/go"
-    #     export GOPATH
-
-    #     PATH=$PATH:$GOPATH/bin
-    #     export PATH
-        
-    #     # export variables as environment variables
-    #     export ARM_CLIENT_OBJECT_ID=${{ secrets.ARM_CLIENT_OBJECT_ID }}
-    #     export ARM_CLIENT_ID=${{ secrets.ARM_CLIENT_ID }}
-    #     export ARM_CLIENT_SECRET=${{ secrets.ARM_CLIENT_SECRET }}
-    #     export ARM_TENANT_ID=${{ secrets.ARM_TENANT_ID }}
-    #     export ARM_SUBSCRIPTION_ID=${{ vars.ARM_SUBSCRIPTION_ID }}
-    #     export ARM_USE_AZUREAD=true
-
-    #     # Run Go tests
-    #     go test -v unit_test.go common.go 2>&1 | go-junit-report -set-exit-code > report.xml
-
-    # - name: Upload unit test summary
-    #   uses: test-summary/action@v2
-    #   with:
-    #     paths: tests/report.xml
-    #     output: validation.md
-    #   if: always()
-
-    # - name: Run Regression Test
-    #   needs: [
-    #     auth,
-    #     tf_install
-    #   ]
-    #   id: regression_tests
-    #   run: | 
-
-    #     # Grab the current version
-    #     CURRENT_VERSION=${{ vars.PROVIDER_VERSION }}
-    #     echo ${CURRENT_VERSION}
-
-    #     # Set the current version
-    #     sed -i "5aversion = \"${CURRENT_VERSION}\"" examples/standalone/versions.tf
-    #     # format the terraform...
-    #     terraform fmt examples/standalone
-
-    #     # Run the go test without destroy...
-    #     go test -v -run TestItApplies_Regression_Part_1 2>&1 | go-junit-report -set-exit-code > report.xml
-
-    #     # Update the provider version...
-    #     sed -i '6d' examples/standalone/versions.tf
-
-    #     # Run the go test with destroy...
-    #     go test -v -run TestItApplies_Regression_Part_2 2>&1 | go-junit-report -set-exit-code >> report.xml
-
-    #     # Update version 
-    #     # grab the latest version....
-    #     # Update provider version to be the latest version....
-    
-    # - name: Upload regression test summary
-    #   needs: regression_tests
-    #   uses: test-summary/action@v2
-    #   with:
-    #     paths: |
-    #       tests/report.xml
-    #   if: always()
 
 
 
