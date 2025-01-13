@@ -91,7 +91,7 @@ jobs:
         echo ${CURRENT_VERSION}
 
         # Set the current version
-        sed -i "5aversion = \"${CURRENT_VERSION}\"" examples/standalone/versions.tf
+        sed -i "5aversion = \"${CURRENT_VERSION}\"" ../examples/standalone/versions.tf
         # format the terraform...
         terraform fmt examples/standalone
 
@@ -99,7 +99,7 @@ jobs:
         go test -v -run TestItApplies_Regression_Part_1 2>&1 | go-junit-report -set-exit-code > r1_report.xml
 
         # Update the provider version...
-        sed -i '6d' examples/standalone/versions.tf
+        sed -i '6d' ../examples/standalone/versions.tf
 
         # Run the go test with destroy...
         go test -v -run TestItApplies_Regression_Part_2 2>&1 | go-junit-report -set-exit-code >> r2_report.xml
