@@ -138,6 +138,9 @@ jobs:
         # format the terraform...
         terraform fmt ../examples/standalone
 
+        # Output versions.tf...
+        cat ../examples/standalone/versions.tf 
+
         # Run the go test without destroy...
         go test -v -run TestItApplies_Regression_Part_1 ./... 2>&1 | go-junit-report -set-exit-code > r1_report.xml
 
@@ -146,6 +149,9 @@ jobs:
         sed -i "5aversion = \"${{ steps.pull_and_parse.outputs.NEW_PROVIDER_VERSION }}\"" ../examples/standalone/versions.tf
         # format the terraform...
         terraform fmt ../examples/standalone
+
+        # Output versions.tf...
+        cat ../examples/standalone/versions.tf 
 
         # Run the go test with destroy...
         go test -v -run TestItApplies_Regression_Part_2 ./... 2>&1 | go-junit-report -set-exit-code > r2_report.xml
