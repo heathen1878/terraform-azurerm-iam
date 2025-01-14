@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/gruntwork-io/terratest/modules/terraform"
-	test_structure "github.com/gruntwork-io/terratest/modules/test-structure"
 )
 
 type Options map[string]any
@@ -34,10 +33,13 @@ func (o Options) Without(key string) Options {
 }
 
 func Setup(t *testing.T, e string, opts Options) *terraform.Options {
-	tempFolder := test_structure.CopyTerraformFolderToTemp(t, "../", e)
 	return &terraform.Options{
-		TerraformDir: tempFolder,
+		TerraformDir: fmt.Sprintf("../%s", e),
 		Vars:         opts,
+		BackendConfig: map[string]interface{}{
+			"path": "test.tfstate",
+		},
+		Upgrade: true,
 	}
 }
 
